@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import (render_template,
                    redirect,
                    url_for,
@@ -6,7 +7,7 @@ from flask import (render_template,
 
 from App.forms import SignupForm, LoginForm, NewFeedbackForm
 
-from App import app
+from App import app, db
 
 
 @app.route("/index/")
@@ -27,7 +28,14 @@ def signup():
         password = form.password.data
         password2 = form.password2.data
 
-        print(username, email, password, password2)
+        db.user.insert_one({
+            "username" : username,
+            "email":email,
+            "password":password,
+            "date_created": datetime.utcnow()
+        })
+        flash(f"The user {username} registed sucessfully", "success")
+        return redirect("/")
     return render_template("signup.html", form=form)
 
 
@@ -44,7 +52,7 @@ def login():
 
         print(email, password)
 
-        flash(f"Η είσοδος του χρήστη με email: {email} στη σελίδα μας έγινε με επιτυχία.", "success")
+        flash(f"The user {email} logged sucessfully", "success")
 
     return render_template("login.html", form=form)
 
