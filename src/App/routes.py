@@ -6,9 +6,8 @@ from flask import (render_template,
                    flash)
 
 from App.forms import SignupForm, LoginForm, NewFeedbackForm
-
-from App import app, db
-
+from App import app, db, bc_enc
+import re
 
 @app.route("/index/")
 @app.route("/")
@@ -27,11 +26,11 @@ def signup():
         email = form.email.data
         password = form.password.data
         password2 = form.password2.data
-
+        encrypted_password = bc_enc.generate_password_hash(password).decode('utf-8')
         db.user.insert_one({
             "username" : username,
             "email":email,
-            "password":password,
+            "password":encrypted_password,
             "date_created": datetime.utcnow()
         })
         flash(f"The user {username} registed sucessfully", "success")
@@ -49,11 +48,13 @@ def login():
     if request.method == 'POST' and form.validate_on_submit():
         email = form.email.data
         password = form.password.data
-
-        print(email, password)
-
-        flash(f"The user {email} logged sucessfully", "success")
-
+        
+        email_exists = db.user.find_one({"email": re.compile(f'^{email}$', re.IGNORECASE)})
+        if bc_enc.check_password_hash(email_exists['password'], password):
+            flash(f"The user {email} logged sucessfully", "success")
+            return redirect(url_for("root"))
+        else:
+            flash(f"Please insert the right credentials.", "warning")
     return render_template("login.html", form=form)
 
 

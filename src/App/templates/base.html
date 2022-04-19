@@ -18,7 +18,7 @@
                         {% for category, message in messages %}
                             <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                                 {{ message | safe }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         {% endfor %}
                     {% endif %}
