@@ -1,4 +1,6 @@
+from string import whitespace
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from App import db
@@ -57,6 +59,12 @@ class NewFeedbackForm(FlaskForm):
                            validators=[DataRequired(message="This field cannot be empty."), 
                                        Length(min=5, message="This field needs to contain at least 5 characters")])
     submit = SubmitField('Send')
+
+class UploadImageForm(FlaskForm):
+    image = FileField('Upload Image', validators=[DataRequired(message="Select an image."),
+                                                  FileAllowed(["jpg","jpe","png","gif"], 'This file type is not allowerd.')])
+    submit = SubmitField('Upload')
+    
     
     
 class AccountUpdateForm(FlaskForm):

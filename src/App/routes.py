@@ -5,10 +5,23 @@ from flask import (render_template,
                    request,
                    flash,session)
 
-from App.forms import SignupForm, LoginForm, NewFeedbackForm, AccountUpdateForm
+from App.forms import SignupForm, LoginForm, NewFeedbackForm, AccountUpdateForm, UploadImageForm
 from App import app, db, bc_enc
-import re
-import uuid
+import uuid, secrets, os, re
+from PIL import Image
+
+
+
+def image_save(image):
+    random_filename = secrets.token_hex(15)
+    file_name, file_extension = os.path.splitext(image.filename)
+    image_filename = random_filename + file_extension
+    image_path = os.path.join(app.root_path, 'static\\images', image_filename)
+    img = Image.open(image)
+    # img.thumbnail(size)
+    img.save(image_path)
+    return image_filename
+
 
 @app.route("/index/")
 @app.route("/")
@@ -35,7 +48,7 @@ def signup():
             "password":encrypted_password,
             "feedbacks":[],
             "reviews":[],
-            "photos_uploaded":[],
+            "uploaded_images":[],
             "date_created": datetime.utcnow()
         })
         flash(f"The user {username} registed sucessfully", "success")
@@ -80,7 +93,7 @@ def feedback():
     form = NewFeedbackForm()
     
     if not user:
-        flash(f"You need to log in to bea ble to leave a feedback.", "warning")
+        flash(f"You need to log in to be able to leave a feedback.", "warning")
         return redirect(url_for('login'))
     
     if request.method == 'POST' and form.validate_on_submit():
@@ -99,10 +112,22 @@ def pool():
     user = get_user()
     return render_template("pool.html",user=user)
 
-@app.route("/upload_photo/", methods=["GET", "POST"])
-def upload_photo():
+@app.route("/upload_image/", methods=["GET", "POST"])
+def upload_image():
     user = get_user()
-    return render_template("upload_photo.html",user=user)
+    print(user)
+    if not user:
+        flash(f"You need to log in to upload an image.", "warning")
+        return redirect(url_for('login'))
+    
+    form = UploadImageForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        image_file = image_save(form.image.data)
+
+        db.user.update_one({'username': user['username']}, {'$push': {'uploaded_images': { "id":uuid.uuid4().hex,"name":image_file, "date_uploaded": datetime.utcnow()}}})
+        flash(f"Thank you for your uploading an image.", "success")
+        return redirect(url_for("root"))
+    return render_template("upload_image.html", form=form,user=user)
 
 
 @app.route("/account/", methods=["GET", "POST"])

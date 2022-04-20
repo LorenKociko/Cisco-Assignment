@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Image{% endblock title %}
+{% block content %}
+<h4>Upload Image</h4>
+<form action="#" method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.image.label(class="form-label") }}
+        {{ form.image(class="form-control") }}
+          {% if form.image.errors %}
+            <ul class=errors>
+            {% for error in form.image.errors %}
+              <li class="alert text-danger">{{ error }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+<hr>
+<h3>My Images</h3>
+<div class="container-fluid d-flex gap-3 flex-wrap">
+  {% for image in user['uploaded_images'] %}
+    <img src="/static/images/{{image['name']}}" class="img-thumbnail">
+  {% endfor %}
+</div>
+{% endblock content %}
