@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_pymongo import PyMongo
-from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
@@ -16,12 +15,7 @@ app.config['MONGO_URI'] = f"mongodb+srv://cisco:{psw}@cisco.wzrhr.mongodb.net/Ci
 mongo_client = PyMongo(app)
 db = mongo_client.db
 
-
-
 bc_enc = Bcrypt()
 
-# login_manager = LoginManager(app)
-# login_manager.login_view = "login"
-# login_manager.login_message_category = "warning"
 
 from App import routes

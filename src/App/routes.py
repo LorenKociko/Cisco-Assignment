@@ -3,18 +3,20 @@ from flask import (render_template,
                    redirect,
                    url_for,
                    request,
-                   flash)
+                   flash,session)
 
 from App.forms import SignupForm, LoginForm, NewFeedbackForm
 from App import app, db, bc_enc
 import re
 
+
 @app.route("/index/")
 @app.route("/")
 def root():
-    return render_template("index.html")
-
-
+    user = None
+    if "user" in session:
+        user = session["user"]
+    return render_template("index.html", user=user)
 
 @app.route("/signup/", methods=["GET", "POST"])
 def signup():
@@ -27,6 +29,7 @@ def signup():
         password = form.password.data
         password2 = form.password2.data
         encrypted_password = bc_enc.generate_password_hash(password).decode('utf-8')
+        
         db.user.insert_one({
             "username" : username,
             "email":email,
@@ -50,18 +53,21 @@ def login():
         password = form.password.data
         
         email_exists = db.user.find_one({"email": re.compile(f'^{email}$', re.IGNORECASE)})
-        if bc_enc.check_password_hash(email_exists['password'], password):
-            flash(f"The user {email} logged sucessfully", "success")
+        if email_exists and bc_enc.check_password_hash(email_exists['password'], password):
+            session['user']= {
+                "email": email_exists["email"],
+                "username": email_exists["username"]
+                }
+            flash(f"The user {email} logged sucessfully.", "success")
             return redirect(url_for("root"))
         else:
             flash(f"Please insert the right credentials.", "warning")
     return render_template("login.html", form=form)
 
 
-
-
 @app.route("/logout/")
 def logout():
+    session.pop("user", None)
     return redirect(url_for("root"))
 
 
