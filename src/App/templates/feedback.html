@@ -1,4 +1,53 @@
 {% extends 'base.html' %}
 
 {% block title %}Feedback{% endblock title %}
-{% block content %}Hey Feedback{% endblock content %}
+{% block content %}
+<div class="container login-container">
+    <div class="row">
+      <div class="col-md-6 login-form-1">
+          <h3>{{ page_title }}</h3>
+          <form method="POST" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+              {{ form.feedback_title.label(class="form-label") }}
+              {{ form.feedback_title(class="form-control") }}
+              {% if form.feedback_title.errors %}
+                <ul class=errors>
+                {% for error in form.feedback_title.errors %}
+                  <li class="alert text-danger">{{ error }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              {{ form.feedback_body.label(class="form-label") }}
+              {{ form.feedback_body(class="form-control", rows="5") }}
+              {% if form.feedback_body.errors %}
+                <ul class=errors>
+                {% for error in form.feedback_body.errors %}
+                  <li class="alert text-danger">{{ error }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+          </form>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <h3>My feedbacks</h3>
+  <div class="container-fluid d-flex gap-3 flex-wrap">
+    {% for card in user['feedbacks'] %}
+        <div class="card border-primary mb-3" style="width: 24rem;">
+            <div class="card-header"> {{card['date_created'].strftime('%d %B %Y - %H:%M:%S')}}</div>
+            <div class="card-body">
+                <h5 class="card-title">{{card['feedback_title']}}</h5>
+                <p class="card-text">{{card['feedback_body']}}</p>
+            </div>
+        </div>
+    {% endfor %}
+  </div>
+  {% endblock content %}

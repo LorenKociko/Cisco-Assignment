@@ -20,15 +20,22 @@
         </li>
       </ul>
       <ul class="nav navbar-nav ml-auto">
+        {% if user %}
+
+        <li class="nav-item">
+          <a class="nav-link" href="/account/">{{user.username}}</a>
+        </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout/">Logout</a>
+          </li>
+        {% else %}
         <li class="nav-item">
           <a class="nav-link" href="/signup/">Register</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/login/">Login</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/logout/">Logout</a>
-        </li>
+        {% endif %}
       </ul>
     </div>
   </div>
