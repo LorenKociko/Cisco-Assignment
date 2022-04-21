@@ -1,7 +1,7 @@
 from string import whitespace
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import StringField, SubmitField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from App import db
 import re
@@ -64,7 +64,6 @@ class UploadImageForm(FlaskForm):
     image = FileField('Upload Image', validators=[DataRequired(message="Select an image."),
                                                   FileAllowed(["jpg","jpe","png","gif"], 'This file type is not allowerd.')])
     submit = SubmitField('Upload')
-    
     
     
 class AccountUpdateForm(FlaskForm):

@@ -4,7 +4,6 @@ from flask import (render_template,
                    url_for,
                    request,
                    flash,session)
-
 from App.forms import SignupForm, LoginForm, NewFeedbackForm, AccountUpdateForm, UploadImageForm
 from App import app, db, bc_enc
 import uuid, secrets, os, re
@@ -18,7 +17,6 @@ def image_save(image):
     image_filename = random_filename + file_extension
     image_path = os.path.join(app.root_path, 'static\\images', image_filename)
     img = Image.open(image)
-    # img.thumbnail(size)
     img.save(image_path)
     return image_filename
 
@@ -29,12 +27,11 @@ def root():
     user = get_user()
     return render_template("index.html", user=user)
 
+
 @app.route("/signup/", methods=["GET", "POST"])
 def signup():
     user = get_user()
-
     form = SignupForm()
-
     if request.method == 'POST' and form.validate_on_submit():
         username = form.username.data
         email = form.email.data
@@ -52,9 +49,8 @@ def signup():
             "date_created": datetime.utcnow()
         })
         flash(f"The user {username} registed sucessfully", "success")
-        return redirect("/")
+        return redirect(url_for("login"))
     return render_template("signup.html", form=form,user=user)
-
 
 
 
@@ -72,7 +68,6 @@ def login():
             session['user']= {
                 "email": email_exists["email"],
                 "username": email_exists["username"],
-                "feedbacks": email_exists["feedbacks"],
                 }
             flash(f"The user {email} logged sucessfully.", "success")
             return redirect(url_for("root"))
@@ -107,15 +102,25 @@ def feedback():
     return render_template("feedback.html", form=form, user= user)
 
 
-@app.route("/pool/", methods=["GET", "POST"])
-def pool():
+@app.route("/poll/", methods=["GET", "POST"])
+def poll():
     user = get_user()
-    return render_template("pool.html",user=user)
+    current_poll = db.poll.find_one_or_404({"id":1})
+    if request.method == 'POST':
+        db.poll.update_one({'id': current_poll['id']}, {'$push': {'votes': { "id":uuid.uuid4().hex,"username":user['username'], "vote":request.form['optionsRadios'],"date_ucreated": datetime.utcnow()}}})
+        flash(f"Thank you for your vote!", "success")
+        return redirect(url_for('poll'))
+    # db.poll.insert_one({
+    #         "id":1,
+    #         "question" : "What is your favourite pet?",
+    #         "answers": ['Cat','Dog','Fish','Snake','Other'],
+    #         "votes":[]
+    #     })
+    return render_template("poll.html",user=user,current_poll=current_poll)
 
 @app.route("/upload_image/", methods=["GET", "POST"])
 def upload_image():
     user = get_user()
-    print(user)
     if not user:
         flash(f"You need to log in to upload an image.", "warning")
         return redirect(url_for('login'))

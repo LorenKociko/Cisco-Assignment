@@ -21,10 +21,46 @@
     </div>
 </form>
 <hr>
-<h3>My Images</h3>
-<div class="container-fluid d-flex gap-3 flex-wrap">
-  {% for image in user['uploaded_images'] %}
-    <img src="/static/images/{{image['name']}}" class="img-thumbnail">
-  {% endfor %}
+<h3>Images Gallery</h3>
+
+
+<section class="gallery min-vh-100">
+  <div class="container-lg">
+     <div class="row gy-4 row-cols-1 row-cols-sm-2 row-cols-md-3">
+      {% for image in user['uploaded_images'] %}
+        <div class="col">
+          <img src="/static/images/{{image['name']}}" class="gallery-item" alt="gallery">
+        </div>
+      {% endfor %}
+     </div>
+  </div>
+</section>
+
+<div class="modal fade" id="gallery-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a type="button" id="download-btn" class="btn btn-primary">Download</a>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <img src="" class="modal-img" alt="modal img">
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener("click",function (e){
+    if(e.target.classList.contains("gallery-item")){
+        const src = e.target.getAttribute("src");
+        document.querySelector(".modal-img").src = src;
+        document.querySelector("#download-btn").setAttribute("href",src)
+        document.querySelector("#download-btn").setAttribute("download",src)
+        const myModal = new bootstrap.Modal(document.getElementById('gallery-modal'));
+        myModal.show();
+    }
+  })  
+</script
+
 {% endblock content %}

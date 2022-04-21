@@ -28,12 +28,6 @@ body {
     text-decoration: underline;
 }
 
-
-/* footer{
-	color: #fff;
-	background-color: #343a40;
-} */
-
 .litems,
 .mlink {
     text-decoration: none;
@@ -48,4 +42,24 @@ body {
 
 .row {
     margin-top: 20px;
+}
+
+img {
+    max-width: 100%;
+}
+
+.gallery {
+    padding: 20px 0;
+}
+
+.gallery img {
+    background-color: #ffffff;
+    padding: 15px;
+    width: 100%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+#gallery-modal .modal-img {
+    width: 100%;
 }

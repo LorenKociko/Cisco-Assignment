@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}poll{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-arrow-right"></span>{{current_poll['question']}}
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="#">
+                        <ul class="list-group">
+                            {% for answer in current_poll['answers'] %}
+                                <li class="list-group-item">
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="optionsRadios" value = "{{answer}}" required>
+                                            {{answer}}
+                                        </label>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="panel-footer">
+                            <button type="submit" class="btn btn-primary btn-sm my-3">Vote</button>
+                </form>
+                </div>
+
+            </div>
+</div>
+</div>
+<hr>
+<h3>Results:</h3>
+<canvas id="pieChart" style="width:100%;max-width:700px"></canvas>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
+<script>
+    let votes = {{current_poll['votes'] |tojson|safe}}
+    let labels = {{current_poll['answers'] |tojson|safe}}
+    counts={}
+    for(let key of labels){
+        counts[key] = 0
+    }
+    
+    for(let i=0;i<votes.length;i++){
+        let vote = votes[i]['vote']
+        counts[vote]++
+    }
+
+    var ctxP = document.getElementById("pieChart").getContext('2d');
+    var myPieChart = new Chart(ctxP, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: Object.values(counts),
+          backgroundColor: ["#F7464A", "#3852a4", "#FDB45C", "#949FB1", "#4D5360"],
+          hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#616774"]
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+    
+    
+</script>
+{% endblock content %}
