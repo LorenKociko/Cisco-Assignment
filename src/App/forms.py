@@ -4,6 +4,7 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SubmitField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from App import db
+from flask import session
 import re
 
 
@@ -76,17 +77,16 @@ class AccountUpdateForm(FlaskForm):
     user = {}
     submit = SubmitField('Update')
     
-    
     def validate_username(self, username):
-        print(self.user)
-        if username.data != self.user['username']:
+        user = session['user']
+        if username.data != user['username']:
             user_exists = db.user.find_one({"username": re.compile(f'^{username.data}$', re.IGNORECASE)})
             if user_exists:
                 raise ValidationError('This username is already in use!')
 
     def validate_email(self, email):
-        print(self.user)
-        if email.data != self.user['email']:
+        user = session['user']
+        if email.data != user['email']:
             email_exists = db.user.find_one({"email": re.compile(f'^{email.data}$', re.IGNORECASE)})
             if email_exists:
                 raise ValidationError('This email is already in use!')

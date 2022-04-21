@@ -105,6 +105,11 @@ def feedback():
 @app.route("/poll/", methods=["GET", "POST"])
 def poll():
     user = get_user()
+    
+    if not user:
+        flash(f"You need to log in to vote.", "warning")
+        return redirect(url_for('login'))
+    
     current_poll = db.poll.find_one_or_404({"id":1})
     if request.method == 'POST':
         db.poll.update_one({'id': current_poll['id']}, {'$push': {'votes': { "id":uuid.uuid4().hex,"username":user['username'], "vote":request.form['optionsRadios'],"date_ucreated": datetime.utcnow()}}})
@@ -138,13 +143,16 @@ def upload_image():
 @app.route("/account/", methods=["GET", "POST"])
 def account():
     user = get_user()
+    if not user:
+        return redirect(url_for('login'))
+    
     form = AccountUpdateForm(username=user['username'], email=user['email'], user= user)
     
     if request.method == 'POST' and form.validate_on_submit():
-        user.username = form.username.data
-        user.email = form.email.data
-        
-        flash(f"The user {user.username} has been updated!", "success")
+        username = form.username.data
+        email = form.email.data
+        db.user.update_one({"email":user['email']}, {'$set': {'username': username,'email':email}})
+        flash(f"The user {username} has been updated!", "success")
         return redirect(url_for('root'))
 
     return render_template("account.html", form=form, user=user)
@@ -154,3 +162,8 @@ def get_user():
     if "user" in session:
         user = db.user.find_one_or_404({"email": session["user"]['email']})
     return user
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404

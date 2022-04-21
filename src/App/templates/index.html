@@ -5,23 +5,35 @@
 <h2>Overview</h2>
 <p>The timing was a bit unfortunate, my family (me included) got tested positive for COVID the day after receiving the assignment, so it wasn't the easiest week, but thankfully we all recovered without any issue.</p>
 <p>I worked with technologies I had close to zero experience. After many tutorials and googling, I think the final result, is decent, but can be improved a lot.</p>
+
 <h4>Used:</h4>
 <ul>
-    <li>Flask with Jinja2 for the overall backend/frontend</li>
-    <li>Bootstrap 5 for the styling</li>
-    <li>MongoDB for the database</li>
-    <li>WTForms for the form validations</li>
-    <li>Bcrypt for the password hashing</li>
-    <li>Flash for the messages towards the user</li>
-    <li>Piillow for the processing and storing</li>
+    <li>Flask with Jinja2 for the overall backend/frontend.</li>
+    <li>Bootstrap 5 for the styling.</li>
+    <li>MongoDB for the database.</li>
+    <li>WTForms for the form validations.</li>
+    <li>Bcrypt for the password hashing.</li>
+    <li>Flash for the messages towards the user.</li>
+    <li>Piillow for the processing and storing.</li>
+</ul>
+<br>
+<h4>Test account: admin@admin.com / C1sco12345</h4>
+<h4>Functionalities:</h4>
+<ul>
+    <li>Register with unique email and username.</li>
+    <li>Login user.</li>
+    <li>User update information.</li>
+    <li>User can vote in a poll.</li>
+    <li>User can upload photos.</li>
+    <li>User can download his already uploaded photos.</li>
+    <li>User can leave feedbacks.</li>
 </ul>
 <br>
 <h4>Needs to be done:</h4>
 <ul>
-    <li>Custom validaroe for the username on register, to not include special characters</li>
-    <li>Security concern about how the user is loaded based on the session</li>
-    <li>User edit information</li>
-    <li>404 page</li>
-
+    <li>Custom validator to exclude special characters.</li>
+    <li>Security concern about how the user is loaded based on the session.</li>
+    <li>Add a "unique" checkbox to the poll result page.</li>
+    <li>better authorization</li>
 </ul>
 {% endblock content %}
